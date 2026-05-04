@@ -1,4 +1,4 @@
-"""User-defined string templates with optional safe formatting."""
+"""Пользовательские строковые шаблоны с опционально «мягким» форматированием."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from typing import Any, Mapping
 
 
 class _SoftFormatter(string.Formatter):
-    """Replace missing keys with empty string instead of raising."""
+    """При отсутствии ключа подставлять пустую строку вместо исключения."""
 
     def get_value(self, key: Any, args: Any, kwds: Mapping[str, Any]) -> Any:  # type: ignore[override]
         try:
@@ -23,9 +23,9 @@ class _SoftFormatter(string.Formatter):
 
 def format_command(template: str, data: Mapping[str, Any], safe: bool = True) -> str:
     """
-    Format *template* with *data*.
+    Подставить в *template* значения из *data*.
 
-    When ``safe`` is True, missing placeholders resolve to empty strings.
+    Если ``safe`` истина, отсутствующие плейсхолдеры дают пустые строки.
     """
     if safe:
         return _SoftFormatter().format(template, **dict(data))

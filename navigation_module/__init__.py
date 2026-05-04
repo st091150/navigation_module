@@ -1,4 +1,4 @@
-"""Reusable 2D GPS + IMU navigation utilities and command generation."""
+"""Переиспользуемые средства 2D-навигации GPS + IMU и генерация команд."""
 
 from navigation_module.config.settings import NavigationSettings
 from navigation_module.control.executor import execute_command

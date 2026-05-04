@@ -1,4 +1,4 @@
-"""Tests for waypoint acceptance radius."""
+"""Тесты радиуса допуска достижения точки."""
 
 from navigation_module.core.navigation import reached_target
 

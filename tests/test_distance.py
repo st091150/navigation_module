@@ -1,4 +1,4 @@
-"""Tests for distance-related helpers."""
+"""Тесты функций, связанных с расстоянием."""
 
 import math
 

@@ -1,4 +1,4 @@
-"""Configurable serialization of navigation artifacts."""
+"""Настраиваемая сериализация результатов навигации."""
 
 from __future__ import annotations
 
@@ -16,11 +16,11 @@ def write_navigation_output(
     file_path: str | Path | None = None,
 ) -> str | dict[str, Any] | None:
     """
-    Return or persist navigation output.
+    Вернуть или сохранить вывод навигации.
 
-    - dict: returns Python dict unchanged (caller convenience).
-    - json: JSON string.
-    - file: writes JSON to ``file_path`` (required); returns path string.
+    - dict: вернуть словарь Python без изменений (удобство для вызывающего кода).
+    - json: строка JSON.
+    - file: записать JSON в ``file_path`` (обязателен); вернуть путь строкой.
     """
     if output_mode == "dict":
         return data
@@ -28,9 +28,9 @@ def write_navigation_output(
         return json.dumps(data, indent=2)
     if output_mode == "file":
         if file_path is None:
-            raise ValueError("file_path is required when output_mode='file'")
+            raise ValueError("При output_mode='file' нужно указать file_path")
         path = Path(file_path)
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(data, indent=2), encoding="utf-8")
         return str(path.resolve())
-    raise ValueError(f"Unknown output_mode: {output_mode!r}")
+    raise ValueError(f"Неизвестный output_mode: {output_mode!r}")

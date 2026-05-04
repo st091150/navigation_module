@@ -1,7 +1,7 @@
 """
-Simulated multi-waypoint run with mock actuator and trajectory plot.
+Симуляция прохода по нескольким точкам: mock-привод и график траектории.
 
-Run from repository root::
+Запуск из корня репозитория::
 
     python examples/demo_navigation.py
 """
@@ -32,7 +32,7 @@ _EARTH_RADIUS_M = 6_371_000.0
 
 
 def local_meters_to_latlon(x_m: float, y_m: float, origin: GPSOrigin) -> tuple[float, float]:
-    """Inverse flat-earth: local EN → lat/lon degrees."""
+    """Обратное плоское преобразование: локальные восток/север → широта/долгота в градусах."""
     dlat_rad = y_m / _EARTH_RADIUS_M
     dlon_rad = x_m / (_EARTH_RADIUS_M * max(origin.cos_lat0, 1e-6))
     lat_deg = (origin.lat0_rad + dlat_rad) * 180.0 / math.pi
@@ -41,7 +41,7 @@ def local_meters_to_latlon(x_m: float, y_m: float, origin: GPSOrigin) -> tuple[f
 
 
 def add_gps_noise(lat_deg: float, lon_deg: float, sigma_m: float) -> tuple[float, float]:
-    """Rough perturbation in meters scaled near origin latitude."""
+    """Грубое смещение в метрах с учётом широты в окрестности точки."""
     noise_e = random.gauss(0.0, sigma_m)
     noise_n = random.gauss(0.0, sigma_m)
     lat0_rad = lat_deg * math.pi / 180.0
@@ -52,7 +52,7 @@ def add_gps_noise(lat_deg: float, lon_deg: float, sigma_m: float) -> tuple[float
 
 
 class SimpleSimulator:
-    """Tiny planar robot stepped by high-level commands."""
+    """Плоский робот с малым шагом по командам верхнего уровня."""
 
     def __init__(
         self,
@@ -152,7 +152,7 @@ def run_demo() -> None:
         headings.append((fx, fy, sim.yaw_rad))
 
         q = yaw_to_quaternion_z(sim.yaw_rad)
-        _ = q  # Example IMU-style orientation available to planners
+        _ = q  # Пример ориентации в стиле IMU для планировщиков
 
     fig, ax = plt.subplots(figsize=(7, 7))
     ax.plot(traj_x, traj_y, "-", label="filtered track", color="tab:blue")

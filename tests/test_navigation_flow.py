@@ -1,4 +1,4 @@
-"""Integration-style checks for control outputs and command dispatch."""
+"""Интеграционные проверки выходов управления и диспетчеризации команд."""
 
 import math
 

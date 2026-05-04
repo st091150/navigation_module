@@ -1,4 +1,4 @@
-"""Tests for angle helpers and quaternion yaw."""
+"""Тесты функций для углов и yaw из кватерниона."""
 
 import math
 
@@ -20,7 +20,7 @@ def test_angle_error_uses_atan2_form():
 
 
 def test_bearing_eastish_track():
-    # Roughly east segment near equator
+    # Отрезок примерно на восток у экватора
     b = bearing_to_target((0.0, 0.0), (0.0, 0.01))
     assert abs(b) < 0.2
 

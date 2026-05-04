@@ -1,4 +1,4 @@
-"""Controller abstraction and mock hardware."""
+"""Абстракция контроллера и заглушка «железа»."""
 
 from __future__ import annotations
 
@@ -6,23 +6,23 @@ from abc import ABC, abstractmethod
 
 
 class RobotController(ABC):
-    """Hardware abstraction: integrate your robot by subclassing."""
+    """Аппаратная абстракция: подключайте робота через наследование."""
 
     @abstractmethod
     def turn(self, angle_deg: float) -> None:
-        """Rotate in place by angle (degrees, sign = direction convention)."""
+        """Разворот на месте на угол (градусы; знак — по вашей конвенции направления)."""
 
     @abstractmethod
     def move(self, distance_m: float) -> None:
-        """Drive forward approximately distance_m meters."""
+        """Проехать вперёд примерно distance_m метров."""
 
     @abstractmethod
     def stop(self) -> None:
-        """Halt motion."""
+        """Остановка."""
 
 
 class MockController(RobotController):
-    """Print-only controller for simulation or debugging."""
+    """Контроллер только с печатью в консоль — для симуляции или отладки."""
 
     def turn(self, angle_deg: float) -> None:
         print(f"[MOCK] TURN {angle_deg:.4g} deg")

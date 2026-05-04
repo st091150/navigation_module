@@ -1,4 +1,4 @@
-"""GPS helpers: local tangent plane meters from first fix, distance, bearing."""
+"""Утилиты GPS: метры в локальной касательной плоскости от первого фикса, расстояние, пеленг."""
 
 from __future__ import annotations
 
@@ -6,13 +6,13 @@ import math
 from dataclasses import dataclass
 from typing import Tuple
 
-# Mean Earth radius (meters)
+# Средний радиус Земли (метры)
 _EARTH_RADIUS_M = 6_371_000.0
 
 
 @dataclass
 class GPSOrigin:
-    """Origin for local ENU-style XY (x=east, y=north) in meters."""
+    """Начало локальных координат в стиле ENU: XY в метрах (x — восток, y — север)."""
 
     lat0_rad: float
     lon0_rad: float
@@ -24,7 +24,7 @@ def _deg_to_rad(deg: float) -> float:
 
 
 def make_origin(lat_deg: float, lon_deg: float) -> GPSOrigin:
-    """Build origin from the first GPS reading."""
+    """Создать начало координат по первому GPS-измерению."""
     lat0 = _deg_to_rad(lat_deg)
     lon0 = _deg_to_rad(lon_deg)
     return GPSOrigin(lat0_rad=lat0, lon0_rad=lon0, cos_lat0=math.cos(lat0))
@@ -34,8 +34,8 @@ def latlon_to_local_meters(
     lat_deg: float, lon_deg: float, origin: GPSOrigin
 ) -> Tuple[float, float]:
     """
-    Flat-earth approximation: x east (m), y north (m) relative to origin.
-    Adequate for typical outdoor robot neighborhoods (km scale).
+    Плоская модель Земли: x — восток (м), y — север (м) относительно начала.
+    Достаточно точно для типичных масштабов полевого робота (порядка километров).
     """
     lat = _deg_to_rad(lat_deg)
     lon = _deg_to_rad(lon_deg)
@@ -49,7 +49,7 @@ def latlon_to_local_meters(
 def gps_distance_meters(
     lat1_deg: float, lon1_deg: float, lat2_deg: float, lon2_deg: float
 ) -> float:
-    """Great-circle distance via haversine formula (meters)."""
+    """Расстояние по дуге большого круга по формуле гаверсинуса (метры)."""
     phi1 = _deg_to_rad(lat1_deg)
     phi2 = _deg_to_rad(lat2_deg)
     dphi = _deg_to_rad(lat2_deg - lat1_deg)
@@ -66,8 +66,8 @@ def bearing_between_points(
     lat1_deg: float, lon1_deg: float, lat2_deg: float, lon2_deg: float
 ) -> float:
     """
-    Initial bearing from point 1 to point 2 (radians, math angle: 0 = +x east).
-    Converts from navigational bearing (clockwise from north) for flat mapping.
+    Начальный пеленг из точки 1 в точку 2 (радианы; матем. угол: 0 = ось +x на восток).
+    Перевод из навигационного пеленга (по часовой от севера) для плоской карты.
     """
     phi1 = _deg_to_rad(lat1_deg)
     phi2 = _deg_to_rad(lat2_deg)
@@ -77,5 +77,5 @@ def bearing_between_points(
         dlamb
     )
     bearing_geo = math.atan2(y, x)
-    # math convention: x=east, y=north → yaw from +x is (π/2 - geo_bearing_from_north)
+    # Матем. конвенция: x — восток, y — север → рысканье от +x: (π/2 − пеленг_от_севера)
     return math.pi / 2.0 - bearing_geo

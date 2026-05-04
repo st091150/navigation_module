@@ -1,4 +1,4 @@
-"""Navigation primitives: distance, bearing, errors, control, commands."""
+"""Примитивы навигации: расстояние, пеленг, ошибки, управление, команды."""
 
 from __future__ import annotations
 
@@ -12,7 +12,7 @@ from navigation_module.core.gps_utils import bearing_between_points, gps_distanc
 def distance_to_target(
     current_gps: tuple[float, float], target_gps: tuple[float, float]
 ) -> float:
-    """Haversine distance from current (lat, lon) deg to target (lat, lon) deg."""
+    """Расстояние по гаверсинусу от текущих (lat, lon) в градусах до цели."""
     lat_c, lon_c = current_gps
     lat_t, lon_t = target_gps
     return gps_distance_meters(lat_c, lon_c, lat_t, lon_t)
@@ -21,14 +21,14 @@ def distance_to_target(
 def bearing_to_target(
     current_gps: tuple[float, float], target_gps: tuple[float, float]
 ) -> float:
-    """Bearing from current to target (radians, consistent with local atan2 frame)."""
+    """Пеленг от текущей точки к цели (радианы; тот же кадр, что и локальный atan2)."""
     lat_c, lon_c = current_gps
     lat_t, lon_t = target_gps
     return normalize_angle(bearing_between_points(lat_c, lon_c, lat_t, lon_t))
 
 
 def angle_error(current_yaw_rad: float, target_bearing_rad: float) -> float:
-    """Normalized steering error using atan2(sin, cos)."""
+    """Нормализованная ошибка руления через atan2(sin, cos)."""
     return normalize_angle(target_bearing_rad - current_yaw_rad)
 
 
@@ -37,7 +37,7 @@ def reached_target(
     target_gps: tuple[float, float],
     radius: float = 1.0,
 ) -> bool:
-    """True if within tolerance radius (meters)."""
+    """True, если расстояние до цели не больше допуска (метры)."""
     return distance_to_target(current_gps, target_gps) <= radius
 
 
@@ -48,7 +48,7 @@ def compute_navigation_control(
     k2: float,
 ) -> tuple[float, float]:
     """
-    Simple posture-based drive commands.
+    Простые команды привода по «позе».
 
     F = k1 * distance * cos(angle_error)
     T = k2 * angle_error
@@ -64,10 +64,10 @@ def compute_differential_thrust(
     thrust_limit: float | None = None,
 ) -> tuple[float, float]:
     """
-    Map (F, T) to left/right differential thrust channels.
+    Отобразить (F, T) на левый/правый каналы дифференциальной тяги.
 
-    left = F - T, right = F + T (sign convention can be swapped per robot).
-    Optional symmetric clamp on magnitude.
+    left = F - T, right = F + T (знак можно поменять под конкретного робота).
+    Опционально симметричное ограничение по модулю.
     """
     left = f_linear - t_angular
     right = f_linear + t_angular
@@ -84,10 +84,10 @@ def generate_command(
     distance_move_threshold_m: float,
 ) -> Dict[str, Any]:
     """
-    Discrete high-level motion primitives.
+    Дискретные примитивы движения верхнего уровня.
 
-    Priority: large heading error → turn; else need to translate → move; else stop.
-    Angles in returned dict are degrees.
+    Приоритет: большая ошибка курса → поворот; иначе нужно ехать → движение; иначе стоп.
+    Углы в возвращаемом словаре — в градусах.
     """
     ae = abs(normalize_angle(angle_error_rad))
     if ae > angle_turn_threshold_rad:

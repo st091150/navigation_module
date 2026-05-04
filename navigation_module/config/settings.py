@@ -1,4 +1,4 @@
-"""Navigation tuning knobs."""
+"""Параметры настройки навигации."""
 
 from __future__ import annotations
 
@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 @dataclass
 class NavigationSettings:
-    """Thresholds and gains for command generation and low-level control."""
+    """Пороги и коэффициенты для генерации команд и низкоуровневого управления."""
 
     k_distance: float = 0.5
     k_heading: float = 1.2

@@ -1,1 +1,1 @@
-"""Core navigation mathematics and utilities."""
+"""Базовая математика и утилиты навигации."""
