@@ -1,0 +1,93 @@
+Metadata-Version: 2.4
+Name: navigation-module
+Version: 0.1.0
+Summary: Reusable 2D GPS + IMU waypoint navigation helpers
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: matplotlib>=3.7.0
+Provides-Extra: dev
+Requires-Dist: pytest>=7.4.0; extra == "dev"
+
+# navigation_module
+
+Reusable **2D waypoint navigation** helpers for robots that fuse **GPS position** with **IMU heading** (yaw or quaternion). The library stays **hardware-agnostic**: integrate real platforms by implementing `RobotController`.
+
+## Features
+
+- Convert GNSS fixes to a **local east–north plane** with an arbitrary origin (first fix).
+- **Distance**, **bearing**, **normalized heading error**, and **reach** checks with a tolerance radius.
+- Simple **low-pass filter** for noisy GPS.
+- Posture-based **control**: \(F = k_1 \, d \cos(\theta_e)\), \(T = k_2 \, \theta_e\) plus **differential left/right thrust**.
+- **Discrete commands**: `turn`, `move`, `stop` via `generate_command`.
+- **Mock controller** and `execute_command` bridge for tests and simulation.
+- **Outputs**: Python dict, JSON string, or JSON file; **string templates** with safe missing keys.
+
+## Layout
+
+```text
+navigation_module/
+  __init__.py
+  core/           # geometry, GPS, orientation, navigation, filters
+  control/        # RobotController, MockController, executor
+  io/             # output modes, templates
+  config/         # NavigationSettings
+tests/
+examples/
+```
+
+## Math (short)
+
+- **Great-circle distance** (haversine) between WGS84 latitude/longitude fixes.
+- **Local XY**: flat-earth tangent plane at the chosen origin; \(x\) east, \(y\) north (good for typical field-robot scales).
+- **Bearing** from current to goal is mapped to the same convention as `atan2(dy, dx)` in that plane.
+- **Heading error** \(\theta_e = \mathrm{wrap}(\theta_{\mathrm{bearing}} - \psi)\) using \(\mathrm{atan2}(\sin\theta_e,\cos\theta_e)\) so it stays in \((-\pi,\pi]\).
+- **Approach law**: \(F\) shrinks when misaligned ( \(\cos\theta_e\) ), \(T\) pushes \(\theta_e\) toward zero; thrust wheels via \(F \pm T\).
+
+## Command system
+
+`generate_command(distance_m, angle_error_rad, angle_turn_threshold_rad, distance_move_threshold_m)` returns:
+
+| Priority | Condition | Payload |
+|----------|-----------|---------|
+| `turn`   | \(|\theta_e|\) above threshold | `{ "type": "turn", "angle_deg": <float> }` |
+| `move`   | distance above threshold | `{ "type": "move", "distance_m": <float> }` |
+| `stop`   | otherwise | `{ "type": "stop" }` |
+
+`execute_command(controller, cmd)` dispatches to `RobotController.turn/move/stop`.
+
+## Integrating hardware
+
+Subclass `navigation_module.control.interface.RobotController` and wire `turn`, `move`, and `stop` to your motor controllers or ROS 2 / Gazebo interfaces. The navigation layer never imports vendor SDKs.
+
+## Install
+
+```bash
+cd navigation_module   # repository root containing pyproject.toml
+python -m pip install -e ".[dev]"
+```
+
+## Tests
+
+```bash
+pytest
+```
+
+## Demo
+
+Simulates noisy GPS, filtered fixes, sequential waypoints, mock actuator prints, and a **matplotlib** trajectory with headings:
+
+```bash
+python examples/demo_navigation.py
+```
+
+An image `examples/demo_navigation.png` is written next to the script; a plot window opens if your environment supports GUI display.
+
+## Requirements
+
+- Python ≥ 3.10  
+- `matplotlib` (demo / visualization)  
+- `pytest` (optional dev extra)
+
+## License
+
+Use and adapt freely for your robot stack; add a license file if you publish publicly.
