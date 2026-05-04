@@ -11,6 +11,7 @@
 - **Дискретные команды**: `turn`, `move`, `stop` через `generate_command`.
 - **MockController** и мост `execute_command` для тестов и симуляции.
 - **Вывод**: словарь Python, строка JSON или файл JSON; **шаблоны строк** с безопасной подстановкой при отсутствующих ключах.
+- Папка **`portable_gps_nav/`**: только расстояние между точками и угол поворота к цели — можно скопировать отдельно, без установки всего проекта (см. `portable_gps_nav/README.md`).
 
 ## Структура проекта
 
@@ -21,6 +22,7 @@ navigation_module/
   control/        # RobotController, MockController, исполнитель команд
   io/             # режимы вывода, шаблоны
   config/         # NavigationSettings
+portable_gps_nav/ # автономный минимум: расстояние и угол к цели (дубликат формул)
 tests/
 examples/
 ```
