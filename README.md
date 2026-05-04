@@ -39,7 +39,7 @@ examples/
 
 | Приоритет | Условие | Полезная нагрузка |
 |-----------|---------|-------------------|
-| `turn`    | \(|\theta_e|\) больше порога | `{ "type": "turn", "angle_deg": <float> }` |
+| `turn`    | модуль угловой ошибки курса больше порога (`angle_turn_threshold_rad`) | `{ "type": "turn", "angle_deg": <float> }` |
 | `move`    | расстояние больше порога | `{ "type": "move", "distance_m": <float> }` |
 | `stop`    | иначе | `{ "type": "stop" }` |
 
